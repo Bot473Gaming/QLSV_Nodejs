@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
+const user = "tungnguyenduong473"
+const password = "SYiGaEaDylHdXlEK"
 
+const uri = `mongodb+srv://tungnguyenduong473:${password}@cluster0.2xl7z.mongodb.net/qlsv_dev`
 async function connect() {
     try {
-        await mongoose.connect('mongodb+srv://tungnguyenduong473:<KEY>@cluster0.2xl7z.mongodb.net//qlsv_dev', {
+        await mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });

@@ -1,95 +1,118 @@
-{{#each students}}
-<tr>
-  <th hidden>{{this._id}}</th>
-  <td>
-    <div class="form-check">
-      <input class="form-check-input" name="studentIds[]" type="checkbox" value="" id="">
-    </div>
-  </td>
-  <td class="nb">{{inc @index '+' 1}}</td>
-  <td class="dt">{{this.studentCode}}</td>
-  <td class="dt">{{this.firstName}}</td>
-  <td class="dt">{{this.lastName}}</td>
-  <td class="dt">{{this.birthday}}</td>
-  <td class="dt">{{this.gender}}</td>
-  <td class="dt">{{this.courseCode}}</td>
-  <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal"
-      onclick="editBtn({{inc @index '+' 1}})">Edit</button></td>
-  <td class="mr-16"><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-      onclick="addId('{{this._id}}')">Delete</button></td>
-</tr>
-{{else}}
-<td colspan="6">
-  No students yet. Add new student now!
-</td>
-{{/each}}
-  
-<script>
+<div class="col">
+  <div class="mb-4 d-flex">
+    <select name="action" class="form-select action-select" style="width: 128px;margin: 0 16px;">
+      <option selected value="null">-- Action --</option>
+      <option value="DEL">Delete</option>
+    </select>
+    <button type="button" class="btn btn-primary disabled btn-apply" data-bs-toggle="modal" data-bs-target="#HandlerModal">
+      Apply
+    </button>
+  </div>
+  </div>
+  <div class="content border rounded">
 
-  function editBtn(id) {
-    const dataStudents = document.querySelector('tbody').children;
-    var inputForm = document.querySelectorAll('.edit-form')
-    var student = Array.from(dataStudents).find(student => student.querySelector('.nb').textContent == id);
-    addId(student.querySelector('th').textContent);
-    student = student.querySelectorAll('.dt');
-    Array.from(student).forEach((val, index) => { inputForm[index].value = val.textContent });
-  }
-  function addId(__id) {
-    var inpId = document.querySelectorAll('input[type=hidden]');
-    Array.from(inpId).forEach(inp => inp.value = __id);
-  }
-  var checkboxs = document.querySelectorAll('.form-check-input');
-  var allCheckBox = document.querySelector('.all-check-input');
-  var btnApply = document.querySelector('.btn-apply');
-  var formApply = document.querySelector('.form-apply');
-  var selectAction = document.querySelector('.action-select');
-  allCheckBox.onclick = () => {
-    var isCheckAll = allCheckBox.checked;
-    Array.from(checkboxs).forEach(checkbox => {checkbox.checked = isCheckAll})  
-    var someCheck = Array.from(checkboxs).some(checkbox => checkbox.checked);
-    if (someCheck && selectAction.value != 'null') {
-      if (btnApply.classList.contains('disabled')) {
-        btnApply.classList.remove('disabled');
-      }
-    } else {
-      if (!btnApply.classList.contains('disabled')) {
-        btnApply.classList.add('disabled');
-      }
-    }
-  }
-  Array.from(checkboxs).forEach(checkbox => checkbox.onchange = () => {
-    var isCheckAll = Array.from(checkboxs).every(checkbox => checkbox.checked);
-    var someCheck = Array.from(checkboxs).some(checkbox => checkbox.checked);
-    allCheckBox.checked = isCheckAll;
-    if (someCheck && selectAction.value != 'null') {
-      if (btnApply.classList.contains('disabled')) {
-        btnApply.classList.remove('disabled');
-      }
-    } else {
-      if (!btnApply.classList.contains('disabled')) {
-        btnApply.classList.add('disabled');
-      }
-    }
-  })
-  selectAction.onchange = () => {
-    var someCheck = Array.from(checkboxs).some(checkbox => checkbox.checked);
-    formApply.action = `/handle?_method=${selectAction.value}`;
-    if (someCheck && selectAction.value != 'null') {
-      if (btnApply.classList.contains('disabled')) {
-        btnApply.classList.remove('disabled');
-      }
-    } else {
-      if (!btnApply.classList.contains('disabled')) {
-        btnApply.classList.add('disabled');
-      }
-    }
-  }
-  btnApply.onclick = (e) => {
-    var studentIds = document.querySelector('input[name=studentIds]');
-    const dataStudents = document.querySelectorAll('tbody > tr');
-    var st = Array.from(dataStudents).filter((student, index) => checkboxs[index].checked).map(val => val.querySelector('th').textContent).join(',');
-    console.log(st)
-    studentIds.value = st;
-    formApply.submit();
-  }
-</script>
+    <table class="table" id="data-table">
+      <thead>
+        <tr>
+          <th scope="col" style="width:5%">
+            <div>
+              <input class="all-check-input form-check-input" type="checkbox" value="" id="">
+              <label class="form-check-label" for="flexCheckDefault">
+                <!-- All -->
+              </label>
+            </div>
+          </th>
+          <th scope="col" style="width:5%">#</th>
+          <th scope="col" style="width:10%">St Code</th>
+          <th scope="col" style="width:22%">Last Name</th>
+          <th scope="col" style="width:12%">First Name</th>
+          <th scope="col" style="width:12%">Birthdate</th>
+          <th scope="col" style="width:10%">Gender</th>
+          <th scope="col" style="width:10%">Cs Code</th>
+          <th scope="col" style="width:7%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each students}}
+          <tr>
+            <td>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  name="studentId[]"
+                  type="checkbox"
+                  value="{{this._id}}"
+                />
+              </div>
+            </td>
+            <td class="nb">{{inc @index "+" 1}}</td>
+            <td class="dt studentCode">{{this.studentCode}}</td>
+            <td class="dt">{{this.lastName}}</td>
+            <td class="dt">{{this.firstName}}</td>
+            <td class="dt">{{this.birthdate}}</td>
+            <td class="dt">{{this.gender}}</td>
+            <td class="dt">{{this.courseCode}}</td>
+            <td><button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#editStudent"
+                onclick="editBtn({{inc @index '+' 1}})"
+                notSameTarget="ed"
+              >Edit</button></td>
+            {{!-- <td class="mr-16">
+              <a class="btn btn-primary" href="detail/{{this._id}}" role="button">Detail</a>
+            </td> --}}
+          </tr>
+        {{else}}
+          <td colspan="6">
+            No students yet. Add new student now!
+          </td>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <button
+      type="button"
+      class="btn btn-primary createStudent"
+      data-bs-target="#createStudent"
+      data-bs-toggle="modal"
+      notSameTarget="cr"
+    >
+      Add New Student
+    </button>
+  </div>
+</div>
+{{> formCreate}}
+{{> formHandler}}
+{{> formEdit}}
+<script src="/js/main.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            $(document).ready(function() {
+                $('#data-table').DataTable({
+                    "columns": [{
+                            "orderable": false,
+                            "searchable": false
+                        },
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        {
+                            "orderable": false,
+                            "searchable": false
+                        },
+                        
+                    ],
+                    order: [
+                        [2, 'asc']
+                    ],
+                    "pageLength": 10,
+                });
+            })
+        });
+    </script>

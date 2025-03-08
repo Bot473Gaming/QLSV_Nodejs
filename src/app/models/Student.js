@@ -8,9 +8,9 @@ const Student = new Schema({
     studentCode: { type: String, required: true, },
     firstName: { type: String, required: true, },
     lastName: { type: String, required: true, },
-    birthday: { type: String, required: true, },
+    birthdate: { type: String, required: true, },
     gender: { type: String, required: true, },
     courseCode: { type: String, required: true, },
 });
 
-module.exports = mongoose.model('Student', Student);
+module.exports = mongoose.model('students', Student);

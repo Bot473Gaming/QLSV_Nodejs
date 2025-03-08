@@ -11,7 +11,12 @@ db.connect();
 
 const app = express();
 
-app.engine('hbs', handlebars.engine({ extname: 'hbs' }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.engine('hbs', handlebars.engine({
+    extname: 'hbs',
+    partialsDir: path.join(__dirname, 'resources', 'views', 'forms')
+    }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources', 'views'));
 
@@ -21,7 +26,8 @@ Handlebars.registerHelper("inc", function(value, options) {
 app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
-    // Routes init
+
+// Routes init
 route(app);
 
 
